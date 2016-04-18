@@ -1,0 +1,409 @@
+maven 篇
+现在流行创建这样的项目
+就是使用maven管理项目
+pom.xml就是项目的配置文件
+
+src/main/java 放项目的java文件
+src/main/resources 放项目的资源文件
+src/test/java 放项目测试用的java文件
+src/test/resources 放项目测试用的资源文件
+
+cn.edu.qhu.entities 这个包下面存放实体
+
+我现在就写这几个实体类那张ppt中的那几个
+
+---------------------------------------------------------
+---------------------------------------------------------
+测试篇
+刚刚我在运行测试，在左边这个窗口，如果是绿色的就是通过测试
+使用assert 断言项目是否正确
+assert connection != null;
+assert 后面一般跟一个boolean值， 如果该值为true就通过，为false就报错
+assert 运算值 == 期待值：运算值;
+如果报错则显示运算值
+
+---------------------------------------------------------
+---------------------------------------------------------
+git 篇
+请看这里：
+左边的文件都有一个金色的小圆柱，他们代表已经被保存到了仓库中
+右面有一个箭头>表示这个文件有更改
+logs 这个文件夹里面是刚刚跑测试生成的日志文件
+我想说的是文件和文件加上都有一个？他们都是没有加入到仓库造成的
+这个日志文件不需要加入仓库，所以忽略它们
+没有任何标识就是不受git管理
+这里有一个向下的箭头，是说服务器上有一个已更新的版本可以更新
+这个是说本地有36个文件可以上传，红色的是说有一个冲突文件，就是你那边改了，我这边也改了，造成冲突
+左边是本地仓库文件，右边是服务器仓库文件
+我刚刚把你电脑上面的修改全部撤销了，所以没有冲突了
+变成有一个文件服务器上有修改，需要下载
+这些test-out是测试生成的日志文件，请现在把他们加入忽略
+刚刚这些框选就是新下载下来的内容
+这里有一个向下的箭头，是说服务器上有一个已更新的版本可以更新消失了
+这里有一个向上的箭头，是说本地仓库有一个已更新的版本可以上传到远程仓库
+就这样，搞定了，现在还有一个文件是因为这个文件在一直被改动
+
+---------------------------------------------------------
+---------------------------------------------------------
+jpa Hibernate 篇
+实体映射：
+@entity 使用该注解表示的java类为一个与数据库映射的java实体（现实社会中实物的抽象），
+数据库会自动根据实体属性创建一张数据表，默认表名为类名的复数形式
+@Id 使用该注解标识一个字段，这个字段就会被数据库映射为主键
+@GeneratedValue 用来表示Id，主要用来指定主键的生成策略，默认是自增
+@ManyToOne 用来映射多对一关系
+我们在数据库的课程中学过多对一关系的表示方式是在多方中加入一方的id
+所以呢，我们一般使用@ManyToOne这个注解的同时会加入另外一个注解
+这个注解即@JoinColumn(name = "xxx")
+顾明思议这个注解的意思就是在数据库中加一列，来关联另外一张表，默认就是管联那张表的id
+
+cn.edu.qhu.tes.dao 包内的文件为我司对hibernate进行的再次封装
+这次的分装让你可以不懂和Hibernate也可以放便使用
+hibernate的功能无非就是以java实体为数据类型对数据库进行增删该查，只不过每个操作都是操作java对象。
+在这里你只需两个接口的调用即可它们分别是：AbstractDao和UserAction
+AbstractDao中封装了诸多对数据的查询方法
+UserAction则封装了对数据的插入、修改、删除的方法
+
+---------------------------------------------------------
+---------------------------------------------------------
+Spring 篇
+Spring 的功能有两个它们分别是IOC和AOP
+IOC是反转控制：以前我们写软件，是自己同过new 关键字来实例化对象，然后set进某个对象，
+而现在不是了，是通过向系统提出要那个对象，系统就返回相应的对象给你
+例如有一个Student类，这个类是一个普通的java类具体如下：
+package com.aqiang.xxx;
+
+import cn.edu.qhu.tes.dao.Identifiable;
+
+public class Student{
+
+	private String username;
+	private String password;
+	private String number;
+	private String compellation;
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getNumber() {
+		return number;
+	}
+
+	public void setNumber(String number) {
+		this.number = number;
+	}
+
+	public String getCompellation() {
+		return compellation;
+	}
+
+	public void setCompellation(String compellation) {
+		this.compellation = compellation;
+	}
+
+}
+
+以前：
+Student student = new Student();
+
+有了Spring之后呢，变成了这样：
+Student student = applicationContext.getBean(Student.class);//通过类型获取
+Student student = applicationContext.getBean("student");//通过Id获取
+
+那么applicationContext是什么呢？它是由spring提供的一个对象，这个对象俗称IOC容器，你想要什么对象就能get到什么对象出来
+（妈妈再也不用担心没有对象啦！！！），
+OK，那么既然applicationContext只是一个容器，那么它里面的对象是哪里来的呢？
+其实还是我们准备好的。我们准备对象的方式有两种，一种是配置文件配置的方式，另外一种是注解的方式
+先说配置文件的方式：
+在spring中，称java对象是bean（一个java类成为bean的条件很简单，
+① 一个普通的java类
+② 所有的属性都有get和set方法
+③ 一个无参数的构造函数（默认就有一个无参数的构造函数，只有你自己创建构造函数时，需要写一个无参构造函数））
+所以呢在我们项目中就有一个配置文件叫做beans.xml这个文件中配置了我们准备要方进去的对象，具体方式如下：
+<!-- 配置一个 bean -->
+<bean id="aaa"<!-- 这里的id即为通过id获取时用到的id --> class="com.aqiang.xxx.Student">
+	<!-- 为属性赋值 -->
+	<property name="username" value="aqiang"></property>
+	<property name="password" value="123"></property>
+	<property name="compellation" value="李志强"></property>
+	<property name="number" value="1200802022"></property>
+</bean>
+
+以上部分系统会自动完成下面操作
+Student aaa = new Student();
+aaa.setUsername("aqiang");
+aaa.setPassword("123");
+aaa.setCompellation("李志强");
+aaa.setNumber("1200802022");
+外加一步把aaa放入容器中
+
+基于配置文件方式升级一点：bean的属性是另外一个类的对象，比如，Student有一个属性是Address代码如下：
+
+package com.aqiang.spring.helloworld;
+
+public class Student {
+	private String username;
+	private String password;
+	private String number;
+	private String compellation;
+	private Address address;
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getNumber() {
+		return number;
+	}
+
+	public void setNumber(String number) {
+		this.number = number;
+	}
+
+	public String getCompellation() {
+		return compellation;
+	}
+
+	public void setCompellation(String compellation) {
+		this.compellation = compellation;
+	}
+
+	public Address getAddress() {
+		return address;
+	}
+
+	public void setAddress(Address address) {
+		this.address = address;
+	}
+
+}
+
+package com.aqiang.spring.helloworld;
+
+public class Address {
+	private String province;
+	private String city;
+	private String street;
+
+	public String getProvince() {
+		return province;
+	}
+
+	public void setProvince(String province) {
+		this.province = province;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getStreet() {
+		return street;
+	}
+
+	public void setStreet(String street) {
+		this.street = street;
+	}
+
+}
+
+<bean id="address" class="com.atguigu.spring.helloworld.Address">
+	<property name="street" value="拱北街道"></property>
+	<property name="province" value="广东省"></property>
+	<property name="city" value="珠海市"></property>
+</bean>
+
+<bean id="student" class="com.atguigu.spring.helloworld.Student">
+	<property name="username" value="aqiang"></property>
+	<property name="password" value="123"></property>
+	<property name="number" value="1200802022"></property>
+	<property name="compellation" value="李志强"></property>
+	<property name="address" ref="address"<!-- 上面bean的id -->></property>
+</bean>
+
+注意这里最后一个属性使用ref指向上面的address，这里用的是id
+
+这样就可以在applicationContext中get到student对象了
+在beans.xml文件中就是用上面的方法配置了dataSource、entityManagerFactory、transactionManager等bean
+他们是什么先下文会提到
+
+注解的方式
+只需要在特定的java类上加入特定的注解，这个类就会被spring实例化为一个bean放入容器中。
+这些注解分别是
+@Repository	标识一个数据库处理器（用于处理数据库操作的java类）
+@Service	标识一个service（用于处理业务逻辑，数据转换等算法的java类）
+@Controller	标识一个控制器（用于处理页面跳转的相关java类）
+@Component	标识一个组件
+它们只是名字不同而已，作用完全相同，也可以随便混用，写4个只是为了规范
+为了让带这些表示的java类被spring实例化为一个java bean，需要告诉springmvc这些java类放在哪个包下，
+<context:component-scan base-package="包名,包名" />的方式来指定哪些包下面的java类被实力化为一个bean
+当一个java类的某一个属性是另外一个java类的对象时，在属性上添加@Autowired注解，spring会根据类型自动匹配，
+如果找不到则报错
+上面的例子可以改写为下面的例子代码
+
+
+package com.aqiang.spring.helloworld;
+
+@Component
+public class Student {
+	private String username;
+	private String password;
+	private String number;
+	private String compellation;
+	@Autowired
+	private Address address;
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public String getNumber() {
+		return number;
+	}
+
+	public void setNumber(String number) {
+		this.number = number;
+	}
+
+	public String getCompellation() {
+		return compellation;
+	}
+
+	public void setCompellation(String compellation) {
+		this.compellation = compellation;
+	}
+
+	public Address getAddress() {
+		return address;
+	}
+
+	public void setAddress(Address address) {
+		this.address = address;
+	}
+
+}
+
+package com.aqiang.spring.helloworld;
+
+@Component
+public class Address {
+	private String province;
+	private String city;
+	private String street;
+
+	public String getProvince() {
+		return province;
+	}
+
+	public void setProvince(String province) {
+		this.province = province;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getStreet() {
+		return street;
+	}
+
+	public void setStreet(String street) {
+		this.street = street;
+	}
+
+}
+
+在配置文件中写入
+<context:component-scan base-package="com.aqiang.spring.helloworld" />
+一行配置即可实现和上面一样的效果
+在我们项目中可以看到beans.xml中指定了
+为什么要这样做呢？因为懒，为了方便，省事。
+需要用到哪个组件@Autowired进来就可以用了，不需要初始化，如果不是用srping的话做到后面，
+上面两层经常会发生各种交叉引用，初始化各种组件估计就要占不少代码
+在我们项目中，处理器（***.handler包下的哪些类）用到的哪些service就是用@Autowired来引入的
+还有Service也会用到Dao层中的东西
+
+AOP是面向切面编程主要用在处理数据库操作的事务处理上，何为事务呢？
+比如买你是某购物网站会员，你下单买一个娃娃，
+那么系统会同时操作多张表的可能如下
+第一扣除你账号上的余额（你是会员，直接操作系统内部会员账号余额）
+第二库房娃娃数量减一
+第三你的购物车中的相关数据状态修改
+第四订单相关数据状态修改
+这里面任何一条操作失败，都需要把数据还原到原来状态的这就涉及到了事务操作。
+在beans.xml文件中定义了
+<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+	<property name="entityManagerFactory" ref="entityManagerFactory"></property>
+</bean>
+这个bean就是一个事务管理器，它的原理就是使用aop操作原理管理事务。
+一般写入数据库的方法都需要使用事务的。
+当需要用到事务时，需要在相应的java方法，或类上增加@Transactional
+如果加载类上，则该类下所有方法都有事务，如果加在方法上则只有该方法有事务
+至此spring 介绍完，当然spring 内容丰富，需要自己去探索
+
+---------------------------------------------------------
+---------------------------------------------------------
+Spring MVC篇
+spring mvc 是一个web框架，它帮助我们处理了一些页面跳转等相关的操作，封装成一系列更加简单方便的操作，使的我们可以集中主力去处理业务逻辑
+简单的使用方法：应答请求和页面跳转
+首先接受页面请求的处理器是一个Controller，在springmvc中交handler，所以都放在了handler包下面
+首先它手spring托管，加一个controller注解，以便帮助实例化相关依赖。
+其次使用@RequestMapping("xxx")来映射请求
+该注解标识一个方法，如果返回一个string类型，那么将转发到一个页面，转发到那个页面呢？
+在mvc.xml中配置了一个bean
+
+<bean
+	class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	<property name="prefix" value="/WEB-INF/views/" />
+	<property name="suffix" value=".jsp" />
+</bean>
+这个bean叫做视图处理器
+其中<property name="prefix" value="/WEB-INF/views/" />叫前缀，<property name="suffix" value=".jsp" />叫后缀
+上面方法返回一个字符串叫做"home"
+那么它将跳转到前缀 + 返回字符串 + 后缀所指页面： /WEB-INF/views/home.jsp
+为更好完成毕设，建议看下springmvc的简单使用
