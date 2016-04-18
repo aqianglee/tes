@@ -18,6 +18,6 @@ public class CoreTest extends AbstractTransactionalTestNGSpringContextTests {
 		DataSource dataSource = applicationContext.getBean(DataSource.class);
 		Connection connection = dataSource.getConnection();
 		assert connection != null;
-		
+
 	}
 }
