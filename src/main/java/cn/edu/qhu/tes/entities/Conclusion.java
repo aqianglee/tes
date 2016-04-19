@@ -6,7 +6,7 @@ import javax.persistence.Id;
 
 import cn.edu.qhu.tes.dao.Identifiable;
 
-//@Entity
+@Entity
 public class Conclusion implements Identifiable {
 
 	private static final long serialVersionUID = 1L;

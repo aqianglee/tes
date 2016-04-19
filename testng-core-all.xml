@@ -1,0 +1,13 @@
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="all-core-tests">
+	<test verbose="2" name="core-tests" annotations="JDK">
+		<groups>
+			<run>
+				<exclude name="exclude"></exclude>
+			</run>
+		</groups>
+		<packages>
+			<package name="cn.edu.qhu.tes.service.impl"></package>
+		</packages>
+	</test>
+</suite>
